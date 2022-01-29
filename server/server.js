@@ -4,7 +4,7 @@ const useSocket = require("socket.io");
 const app = express();
 const PORT = 8000;
 const server = require('http').Server(app);
-const io = useSocket(server);
+const io = require('socket.io')(server);
 
 const rooms = new Map ();
 
@@ -13,9 +13,9 @@ app.get( "/rooms", function (req, res) {
     res.json(rooms);
 });
 
-io.on('connection', (socket) => {
-    console.log('socket connected', socket);
-});
+// io.on('connection', (socket) => {
+//     console.log('socket connected', socket.id);
+// });
 
 server.listen(PORT, (err) => {
     if (err) {
