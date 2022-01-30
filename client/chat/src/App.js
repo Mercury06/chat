@@ -1,21 +1,30 @@
 import React from 'react';
 import socket from './socket';
 import JoinBlock from './components/JoinBlock';
-
-//const socket = io("http://localhost:8000");
-//const socket = io();
+import reducer from './reducer'
 
 function App() {
+  const [state, dispatch] = React.useReducer(reducer, {
+    joined: false,
+    roomId: null,
+    userName: null
+  });
 
-  // const connectSocket = () => {
-  //   io("http://localhost:8000");
-  // }
+const onLogin = (obj) => {
+  dispatch ({
+    type: 'JOINED',
+    payload: obj
+  });
+  socket.emit('ROOM:JOIN', obj);
+};
+
+console.log(state);
 
   return (
     <div className="App">
       <h1>Hello</h1>
       
-      <JoinBlock />
+      {!state.joined && <JoinBlock onLogin={onLogin} />}
     </div>
   );
 }
