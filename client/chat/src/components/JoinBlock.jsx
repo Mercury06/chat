@@ -1,9 +1,5 @@
 import React, {useState} from 'react';
-//import socket from '../socket';
 import axios from 'axios';
-//import reducer from '../reducer'
-
-
 
 function JoinBlock({ onLogin }) {
 
@@ -20,13 +16,13 @@ function JoinBlock({ onLogin }) {
             userName
         };
         setLoading(true);
-        console.log(roomId, userName)
+        //console.log(roomId, userName)
         await axios.post('/rooms', obj);
         onLogin(obj);
     };
 
     return (
-        <div>
+        <div className="join-block">
             <input type="text" placeholder="Room ID" value={roomId} onChange={(e) => setRoomId(e.target.value)} />
             <input type="text" placeholder="Your name" value={userName} onChange={(e) => setUserName(e.target.value)}/>
             <button disabled={isLoading} onClick={onEnter} className="btn btn-success"> 

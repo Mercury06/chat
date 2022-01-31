@@ -1,5 +1,4 @@
 const express = require("express");
-//  const useSocket = require("socket.io");
 
 const app = express();
 const PORT = 8000;
@@ -35,7 +34,7 @@ app.post( "/rooms", (req, res) => {
             ]),
         );
     }
-    console.log(rooms);
+    //console.log(rooms);
     res.send();
 });
 
@@ -44,7 +43,8 @@ io.on('connection', (socket) => {
         socket.join(roomId);
         rooms.get(roomId).get('users').set(socket.id, userName);
         const users = [...rooms.get(roomId).get('users').values()]; // keys();
-        socket.to(roomId).emit('ROOM:SET_USERS', users);
+        //socket.to(roomId).broadcast.emit('ROOM:SET_USERS', users);
+        socket.broadcast.to(roomId).emit('ROOM:SET_USERS', users)
     });
 
     socket.on('ROOM:NEW_MESSAGE', ({ roomId, userName, text }) => {
@@ -52,16 +52,17 @@ io.on('connection', (socket) => {
             userName,
             text
         };
-        rooms.get(roomId).get('messages').push(obj);
-       // const users = [...rooms.get(roomId).get('users').values()]; // keys();
-        socket.to(roomId).emit('ROOM:NEW_MESSAGE', obj);
+        rooms.get(roomId).get('messages').push(obj);      
+        //socket.to(roomId).broadcast.emit('ROOM:NEW_MESSAGE', obj);
+        socket.broadcast.to(roomId).emit('ROOM:NEW_MESSAGE', obj);
     });
 
     socket.on ('disconnect', () => {
         rooms.forEach((value, roomId) => {
             if(value.get('users').delete(socket.id)) {
                 const users = [...value.get('users').values()]; 
-                socket.to(roomId).emit('ROOM:SET_USERS', users);
+                //socket.to(roomId).broadcast.emit('ROOM:SET_USERS', users);
+                socket.broadcast.to(roomId).emit('ROOM:SET_USERS', users);
             }
         });
     });
@@ -76,3 +77,6 @@ server.listen(PORT, (err) => {
     }
     console.log("Server started on port", PORT);
 });
+
+// если socket.to(roomId).broadcast.emit('ROOM:JOIN', users) не рботает, то  работает так: 
+// socket.broadcast.to(roomId).emit('ROOM:JOIN', users)

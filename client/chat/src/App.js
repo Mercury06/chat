@@ -48,18 +48,13 @@ React.useEffect(() => {
   socket.on('ROOM:NEW_MESSAGE', addMessage);
 }, []);
 
-// socket.on('ROOM:JOINED', users => {
-//   console.log('new user', users);
-// })
-
-console.log(state);
 
   return (
-    <div className="App">
+    <div className="wrapper">
       <h1>Hello</h1>
       
       {/* {!state.joined && <JoinBlock onLogin={onLogin} />} */}
-      {!state.joined ? <JoinBlock onLogin={onLogin} /> : <Chat {...state} onAddMessage={addMessage}/> }
+      {!state.joined ? <JoinBlock onLogin={onLogin} /> : <Chat {...state} onAddMessage={addMessage} /> }
     </div>
   );
 }
