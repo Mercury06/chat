@@ -1,5 +1,5 @@
 const express = require("express");
-const useSocket = require("socket.io");
+//  const useSocket = require("socket.io");
 
 const app = express();
 const PORT = 8000;
@@ -7,16 +7,24 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 app.use(express.json());
+//app.use(express.urlencoded({ extended: true })); 
 
 const rooms = new Map ();
 
-app.get( "/rooms", (req, res) => {
-    rooms.set("hello", "");
-    res.json(rooms);
+app.get( "/rooms/:id", (req, res) => {
+    const { id: roomId } = req.params;
+    const obj = rooms.has (roomId) 
+    ? {
+        users: [...rooms.get(roomId).get('users').values()],
+        messages: [...rooms.get(roomId).get('messages').values()]
+    }
+    : { users: [], messages: []};
+    //rooms.set("hello", "");
+    res.json(obj);
 });
 
 app.post( "/rooms", (req, res) => {
-    console.log('Hello');
+  
     const { roomId, userName } = req.body;    
     if (!rooms.has(roomId)) {
         rooms.set(
@@ -28,13 +36,36 @@ app.post( "/rooms", (req, res) => {
         );
     }
     console.log(rooms);
-    res.json(rooms);
+    res.send();
 });
 
 io.on('connection', (socket) => {
-    socket.on('ROOM:JOIN', (data) => {
-        console.log(data);
+    socket.on('ROOM:JOIN', ({ roomId, userName }) => {
+        socket.join(roomId);
+        rooms.get(roomId).get('users').set(socket.id, userName);
+        const users = [...rooms.get(roomId).get('users').values()]; // keys();
+        socket.to(roomId).emit('ROOM:SET_USERS', users);
     });
+
+    socket.on('ROOM:NEW_MESSAGE', ({ roomId, userName, text }) => {
+        const obj = {
+            userName,
+            text
+        };
+        rooms.get(roomId).get('messages').push(obj);
+       // const users = [...rooms.get(roomId).get('users').values()]; // keys();
+        socket.to(roomId).emit('ROOM:NEW_MESSAGE', obj);
+    });
+
+    socket.on ('disconnect', () => {
+        rooms.forEach((value, roomId) => {
+            if(value.get('users').delete(socket.id)) {
+                const users = [...value.get('users').values()]; 
+                socket.to(roomId).emit('ROOM:SET_USERS', users);
+            }
+        });
+    });
+
     console.log('socket connected', socket.id);
 });
 
