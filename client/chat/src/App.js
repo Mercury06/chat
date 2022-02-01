@@ -50,10 +50,7 @@ React.useEffect(() => {
 
 
   return (
-    <div className="wrapper">
-      <h1>Hello</h1>
-      
-      {/* {!state.joined && <JoinBlock onLogin={onLogin} />} */}
+    <div className="wrapper">   
       {!state.joined ? <JoinBlock onLogin={onLogin} /> : <Chat {...state} onAddMessage={addMessage} /> }
     </div>
   );

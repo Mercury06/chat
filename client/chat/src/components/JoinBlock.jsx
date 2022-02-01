@@ -26,7 +26,7 @@ function JoinBlock({ onLogin }) {
             <input type="text" placeholder="Room ID" value={roomId} onChange={(e) => setRoomId(e.target.value)} />
             <input type="text" placeholder="Your name" value={userName} onChange={(e) => setUserName(e.target.value)}/>
             <button disabled={isLoading} onClick={onEnter} className="btn btn-success"> 
-                {isLoading ? 'Entering' : 'to enter' }
+                {isLoading ? 'Entering' : 'Enter' }
             </button>
         </div>
     );

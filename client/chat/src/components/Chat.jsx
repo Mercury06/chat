@@ -22,7 +22,8 @@ function Chat({ users, messages, userName, roomId, onAddMessage }) {
   return (
     <div className="chat">
       <div className="chat-users">
-        Комната: <b>{roomId}</b>
+        комната: <b>{roomId}</b> <br></br>
+        пользователь: <b>{userName}</b>
         <hr />
         <b>Онлайн ({users.length}):</b>
         <ul>
